@@ -55,7 +55,7 @@ Volcengine Ark Responses API:
 MODEL_PROVIDER=ark
 ARK_API_KEY=your_ark_api_key
 ARK_BASE_URL=https://ark.cn-beijing.volces.com/api/v3/responses
-ARK_MODEL=deepseek-v3-2-251201
+ARK_MODEL=doubao-seed-2-0-mini-260215
 ARK_ENABLE_WEB_SEARCH=false
 ```
 

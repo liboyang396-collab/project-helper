@@ -33,7 +33,7 @@ class Settings(BaseSettings):
 
     ark_api_key: str = ""
     ark_base_url: str = "https://ark.cn-beijing.volces.com/api/v3/responses"
-    ark_model: str = "deepseek-v3-2-251201"
+    ark_model: str = "doubao-seed-2-0-mini-260215"
     ark_temperature: float = Field(default=0.2, ge=0, le=2)
     ark_enable_web_search: bool = False
     ark_web_search_max_keyword: int = 3
