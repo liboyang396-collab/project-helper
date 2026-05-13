@@ -1,0 +1,11 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+.firecrawl/
+backend/storage/repos/
+backend/storage/project_helper.db
+backend/storage/logs/

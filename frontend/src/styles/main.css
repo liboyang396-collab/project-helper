@@ -1,0 +1,593 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  color-scheme: dark;
+  font-family: 'Fira Sans', system-ui, sans-serif;
+  background: #09111f;
+  color: #f8fafc;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    linear-gradient(135deg, rgba(34, 197, 94, 0.12), transparent 28%),
+    linear-gradient(225deg, rgba(56, 189, 248, 0.13), transparent 32%),
+    #09111f;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  width: min(1760px, 100%);
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.topbar {
+  position: sticky;
+  top: 12px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  background: rgba(9, 17, 31, 0.84);
+  backdrop-filter: blur(18px);
+}
+
+.brand,
+.topbar-status,
+.input-row,
+.status-pill,
+.section-header,
+.project-item,
+.force-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.brand {
+  gap: 10px;
+}
+
+.brand-mark {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgba(34, 197, 94, 0.45);
+  border-radius: 8px;
+  color: #86efac;
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.brand strong,
+.brand span {
+  display: block;
+}
+
+.brand span,
+.topbar-status,
+.eyebrow,
+.project-item small,
+.force-toggle,
+.empty-state p,
+.agent-hint p {
+  color: #a8b4c6;
+}
+
+.topbar-status {
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.78);
+}
+
+.command-band {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.72fr) minmax(360px, 1fr);
+  gap: 28px;
+  align-items: end;
+  padding: 42px 4px 28px;
+}
+
+.command-copy h1 {
+  max-width: 760px;
+  margin: 8px 0 0;
+  font-size: clamp(2rem, 5vw, 5rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.repo-form {
+  padding: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+}
+
+.repo-form > label:first-child {
+  display: block;
+  margin-bottom: 8px;
+  color: #dbeafe;
+  font-weight: 600;
+}
+
+.input-row {
+  gap: 10px;
+  min-height: 56px;
+  padding: 8px;
+  border: 1px solid rgba(125, 211, 252, 0.26);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.72);
+}
+
+.input-row svg {
+  flex: 0 0 auto;
+  color: #7dd3fc;
+}
+
+.input-row input,
+.chat-form textarea {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  color: #f8fafc;
+  background: transparent;
+}
+
+.input-row button,
+.chat-form button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 132px;
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  color: #052e16;
+  font-weight: 700;
+  background: #22c55e;
+  transition: background 180ms ease, opacity 180ms ease;
+}
+
+.input-row button:hover,
+.chat-form button:hover {
+  background: #4ade80;
+}
+
+.input-row button:disabled,
+.chat-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.force-toggle {
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.force-toggle input {
+  accent-color: #22c55e;
+}
+
+.workspace-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(520px, 1.7fr) minmax(320px, 0.95fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.sidebar,
+.report-surface,
+.chat-panel,
+.progress-panel {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.74);
+}
+
+.sidebar,
+.chat-panel {
+  position: sticky;
+  top: 88px;
+  max-height: calc(100vh - 108px);
+  overflow: auto;
+}
+
+.sidebar,
+.chat-panel,
+.report-surface {
+  padding: 16px;
+}
+
+.section-header {
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.section-header.compact h2,
+.section-header h2 {
+  margin: 3px 0 0;
+  font-size: 1.08rem;
+  letter-spacing: 0;
+}
+
+.icon-button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  color: #dbeafe;
+  background: rgba(30, 41, 59, 0.9);
+  transition: border-color 180ms ease, color 180ms ease;
+}
+
+.icon-button:hover {
+  border-color: #38bdf8;
+  color: #7dd3fc;
+}
+
+.project-list {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.project-item {
+  width: 100%;
+  min-height: 46px;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 8px;
+  color: #e2e8f0;
+  text-align: left;
+  background: rgba(2, 6, 23, 0.38);
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.project-item span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-item:hover,
+.project-item.active {
+  border-color: rgba(34, 197, 94, 0.62);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.progress-panel {
+  padding: 14px;
+}
+
+.progress-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(30, 41, 59, 0.95);
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #22c55e, #38bdf8);
+  transition: width 240ms ease;
+}
+
+.timeline {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline li {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 8px;
+  align-items: start;
+  color: #dbeafe;
+}
+
+.timeline strong {
+  display: block;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.76rem;
+  color: #86efac;
+}
+
+.timeline p {
+  margin: 2px 0 0;
+  color: #a8b4c6;
+  font-size: 0.9rem;
+}
+
+.timeline span {
+  color: #7dd3fc;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.78rem;
+}
+
+.status-pill {
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+  color: #cbd5e1;
+  background: rgba(2, 6, 23, 0.36);
+}
+
+.status-pill[data-status='completed'] {
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.42);
+}
+
+.report-surface {
+  min-height: 620px;
+}
+
+.markdown-body {
+  color: #dbeafe;
+  line-height: 1.75;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  color: #f8fafc;
+  letter-spacing: 0;
+}
+
+.markdown-body h1 {
+  margin-top: 0;
+  font-size: 2.1rem;
+}
+
+.markdown-body h2 {
+  margin-top: 34px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.markdown-body a {
+  color: #7dd3fc;
+}
+
+.markdown-body code,
+.chat-message code {
+  font-family: 'Fira Code', monospace;
+  color: #bbf7d0;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: 4px;
+  padding: 0.1em 0.32em;
+}
+
+.markdown-body pre,
+.chat-message pre {
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 8px;
+  background: #020617;
+}
+
+.markdown-body pre code,
+.chat-message pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.empty-state,
+.agent-hint {
+  display: grid;
+  min-height: 360px;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  color: #7dd3fc;
+  text-align: center;
+}
+
+.empty-state h3 {
+  margin: 0;
+  color: #f8fafc;
+}
+
+.empty-state p,
+.agent-hint p {
+  max-width: 520px;
+  margin: 0;
+}
+
+.chat-panel {
+  display: grid;
+  min-height: 0;
+  height: calc(100vh - 108px);
+  grid-template-rows: auto 1fr auto auto;
+  overflow: hidden;
+}
+
+.chat-feed {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.chat-message {
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.34);
+}
+
+.chat-message[data-role='user'] {
+  border-color: rgba(56, 189, 248, 0.32);
+  background: rgba(14, 116, 144, 0.16);
+}
+
+.chat-message > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #7dd3fc;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.78rem;
+}
+
+.chat-message p {
+  margin: 0 0 10px;
+}
+
+.chat-form {
+  display: grid;
+  grid-template-columns: 1fr 46px;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.chat-form textarea {
+  resize: vertical;
+  min-height: 74px;
+  padding: 11px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.48);
+}
+
+.chat-form button {
+  min-width: 46px;
+  min-height: 46px;
+  align-self: end;
+}
+
+.inline-error {
+  margin: 10px 0 0;
+  color: #fecaca;
+  font-size: 0.9rem;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.ok {
+  color: #86efac;
+}
+
+.danger {
+  color: #fca5a5;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .workspace-grid {
+    grid-template-columns: 300px 1fr;
+  }
+
+  .chat-panel {
+    position: static;
+    grid-column: 1 / -1;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .chat-feed {
+    min-height: 430px;
+  }
+}
+
+@media (max-width: 820px) {
+  .app-shell {
+    padding: 12px;
+  }
+
+  .topbar,
+  .command-band,
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    position: static;
+    align-items: flex-start;
+  }
+
+  .command-band {
+    padding-top: 24px;
+  }
+
+  .input-row {
+    flex-wrap: wrap;
+  }
+
+  .input-row button {
+    width: 100%;
+  }
+
+  .sidebar {
+    position: static;
+    max-height: none;
+  }
+}
