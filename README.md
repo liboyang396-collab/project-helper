@@ -39,6 +39,16 @@ DEEPSEEK_BASE_URL=https://api.deepseek.com
 DEEPSEEK_MODEL=deepseek-chat
 ```
 
+Xiaomi MiMo OpenAI-compatible API:
+
+```bash
+MODEL_PROVIDER=mimo
+MIMO_API_KEY=your_mimo_api_key
+MIMO_BASE_URL=https://api.xiaomimimo.com/v1
+MIMO_MODEL=mimo-v2.5-pro
+MIMO_DISABLE_THINKING=true
+```
+
 Volcengine Ark Responses API:
 
 ```bash

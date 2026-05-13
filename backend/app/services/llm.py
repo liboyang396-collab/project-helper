@@ -30,6 +30,38 @@ def get_deepseek_chat() -> Optional[ChatOpenAI]:
     )
 
 
+@lru_cache
+def get_mimo_chat() -> Optional[ChatOpenAI]:
+    settings = get_settings()
+    if selected_provider() != "mimo" or not settings.mimo_api_key:
+        return None
+
+    extra_body = {}
+    if settings.mimo_disable_thinking:
+        extra_body["thinking"] = {"type": "disabled"}
+
+    return ChatOpenAI(
+        api_key=settings.mimo_api_key,
+        base_url=settings.mimo_base_url,
+        model=settings.mimo_model,
+        temperature=settings.mimo_temperature,
+        top_p=settings.mimo_top_p,
+        streaming=True,
+        default_headers={"api-key": settings.mimo_api_key},
+        extra_body=extra_body or None,
+        model_kwargs={"max_completion_tokens": settings.mimo_max_completion_tokens},
+    )
+
+
+def get_openai_compatible_chat() -> Optional[ChatOpenAI]:
+    provider = selected_provider()
+    if provider == "deepseek":
+        return get_deepseek_chat()
+    if provider == "mimo":
+        return get_mimo_chat()
+    return None
+
+
 def is_ark_enabled() -> bool:
     settings = get_settings()
     return selected_provider() == "ark" and bool(settings.ark_api_key)
@@ -37,11 +69,11 @@ def is_ark_enabled() -> bool:
 
 def invoke_text(system_prompt: str, user_prompt: str) -> Optional[str]:
     """Call the configured LLM and return full text. Returns None when no provider is configured."""
-    deepseek = get_deepseek_chat()
-    if deepseek is not None:
+    chat = get_openai_compatible_chat()
+    if chat is not None:
         from langchain_core.messages import HumanMessage, SystemMessage
 
-        response = deepseek.invoke(
+        response = chat.invoke(
             [
                 SystemMessage(content=system_prompt),
                 HumanMessage(content=user_prompt),

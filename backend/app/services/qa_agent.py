@@ -10,7 +10,7 @@ from langchain.agents import AgentType, initialize_agent
 from langchain.tools import Tool
 
 from app.models import Project
-from app.services.llm import get_deepseek_chat, is_ark_enabled, selected_provider, stream_text
+from app.services.llm import get_openai_compatible_chat, is_ark_enabled, selected_provider, stream_text
 from app.services.source_scan import IGNORE_DIRS, iter_source_files, safe_read
 
 
@@ -28,6 +28,20 @@ def _safe_path(root: Path, relative_path: str) -> Path:
     return target
 
 
+def _clean_tool_input(value: str) -> str:
+    cleaned = value.strip().strip("`").strip()
+    quote_pairs = (("'", "'"), ('"', '"'), ("“", "”"), ("‘", "’"))
+    changed = True
+    while changed and len(cleaned) >= 2:
+        changed = False
+        for left, right in quote_pairs:
+            if cleaned.startswith(left) and cleaned.endswith(right):
+                cleaned = cleaned[1:-1].strip()
+                changed = True
+                break
+    return cleaned
+
+
 def _rg_ignore_args() -> list[str]:
     glob_args = []
     for directory in IGNORE_DIRS:
@@ -35,7 +49,7 @@ def _rg_ignore_args() -> list[str]:
     return glob_args
 
 
-def _local_answer(project: Project, question: str) -> str:
+def _local_answer(project: Project, question: str, reason: str = "missing_key") -> str:
     root = Path(project.local_path)
     query = question.strip()
     files = list(iter_source_files(root))[:300]
@@ -57,8 +71,20 @@ def _local_answer(project: Project, question: str) -> str:
     file_list = "\n".join(f"- `{path.relative_to(root).as_posix()}`" for path in files[:40])
     match_text = "\n".join(f"- `{line}`" for line in matches[:30]) or "- 暂未匹配到明显代码行"
     provider = selected_provider()
-    key_hint = "`DEEPSEEK_API_KEY`" if provider == "deepseek" else "`ARK_API_KEY`"
-    return f"""当前没有配置可用的 {provider} API Key，所以我先用本地搜索给你一个可验证的回答。
+    key_hints = {
+        "deepseek": "`DEEPSEEK_API_KEY`",
+        "ark": "`ARK_API_KEY`",
+        "mimo": "`MIMO_API_KEY`",
+    }
+    key_hint = key_hints.get(provider, "`DEEPSEEK_API_KEY` / `ARK_API_KEY` / `MIMO_API_KEY`")
+    if reason == "missing_key":
+        intro = f"当前没有配置可用的 {provider} API Key，所以我先用本地搜索给你一个可验证的回答。"
+        outro = f"配置 {key_hint} 后，我可以调用模型结合源码上下文给出更像导师一样的解释。"
+    else:
+        intro = "AI Agent 暂时调用失败，所以我先用本地搜索给你一个可验证的回答。"
+        outro = "你可以稍后重试，或者换一个更具体的问题让我继续查源码。"
+
+    return f"""{intro}
 
 你的问题：{question}
 
@@ -70,7 +96,7 @@ def _local_answer(project: Project, question: str) -> str:
 
 {match_text}
 
-配置 {key_hint} 后，我可以调用模型结合源码上下文给出更像导师一样的解释。"""
+{outro}"""
 
 
 def _is_usage_question(question: str) -> bool:
@@ -338,7 +364,7 @@ def _trim_repeated_answer_block(text: str) -> str:
 
 async def stream_answer(project: Project, question: str) -> AsyncIterator[str]:
     root = Path(project.local_path)
-    llm = get_deepseek_chat()
+    llm = get_openai_compatible_chat()
     yield _sse("status", {"message": "已收到问题，正在准备源码工具"})
 
     if is_ark_enabled():
@@ -366,7 +392,7 @@ async def stream_answer(project: Project, question: str) -> AsyncIterator[str]:
             yield _sse("done", {"message": "completed"})
             return
         except Exception as exc:
-            fallback = _local_answer(project, question)
+            fallback = _local_answer(project, question, reason="provider_error")
             yield _sse("error", {"message": f"火山方舟调用失败，已返回本地搜索结果：{exc}"})
             yield _sse("delta", {"content": fallback})
             yield _sse("done", {"message": "completed"})
@@ -383,11 +409,12 @@ async def stream_answer(project: Project, question: str) -> AsyncIterator[str]:
 
     def read_file(relative_path: str) -> str:
         """Read a repository file by relative path."""
-        path = _safe_path(root, relative_path.strip().strip("`"))
+        path = _safe_path(root, _clean_tool_input(relative_path))
         return safe_read(path, 24000)
 
     def search_code(pattern: str) -> str:
         """Search code with ripgrep-compatible text or regex pattern."""
+        pattern = _clean_tool_input(pattern)
         try:
             result = subprocess.run(
                 [
@@ -450,7 +477,7 @@ async def stream_answer(project: Project, question: str) -> AsyncIterator[str]:
         yield _sse("delta", {"content": str(answer)})
         yield _sse("done", {"message": "completed"})
     except Exception as exc:
-        fallback = _local_answer(project, question)
+        fallback = _local_answer(project, question, reason="agent_error")
         yield _sse("error", {"message": f"AI Agent 调用失败，已返回本地搜索结果：{exc}"})
         yield _sse("delta", {"content": fallback})
         yield _sse("done", {"message": "completed"})
