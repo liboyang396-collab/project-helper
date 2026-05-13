@@ -25,7 +25,7 @@ class Settings(BaseSettings):
 
     mimo_api_key: str = ""
     mimo_base_url: str = "https://api.xiaomimimo.com/v1"
-    mimo_model: str = "mimo-v2.5-pro"
+    mimo_model: str = "mimo-v2.5"
     mimo_temperature: float = Field(default=0.2, ge=0, le=2)
     mimo_top_p: float = Field(default=0.95, ge=0, le=1)
     mimo_max_completion_tokens: int = Field(default=4096, ge=1)
